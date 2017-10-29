@@ -1,4 +1,4 @@
-﻿/// Artimech
+/// Artimech
 /// 
 /// Copyright © <2017> <George A Lancaster>
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this software 
@@ -15,7 +15,6 @@
 /// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, 
 /// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR 
 /// OTHER DEALINGS IN THE SOFTWARE.
-/// 
 
 using System;
 using System.Collections.Generic;
@@ -28,11 +27,22 @@ using UnityEngine;
 /// </summary>
 namespace artiMech
 {
-    public class editorLoadToWaitConditional : stateConditionalBase
+    public class aCubeUp_To_aCubeRest : stateConditionalBase
     {
-        public editorLoadToWaitConditional(string changeStateName) : base(changeStateName)
+        
+        public aCubeUp_To_aCubeRest(string changeStateName) : base (changeStateName)
         {
+            
+        }
 
+        public override void Enter(baseState state)
+        {
+            
+        }
+
+        public override void Exit(baseState state)
+        {
+            
         }
 
         /// <summary>
@@ -44,15 +54,10 @@ namespace artiMech
         {
             string strOut = null;
 
-#if ARTIMECH_THIS_SHOULD_NEVER_BE_TRUE_BUT_IS_AN_EXAMPLE_OF_A_CONDITION_BEING_TRUE
-            This is an example of setting a contition to true if the gameobject
-            falls below a certain height ingame.
-            if (state.m_GameObject.transform.position.y <= 1000)
+            stateGameBase gamebase = (stateGameBase)state;
+            aMechCube script = gamebase.StateGameObject.GetComponent<aMechCube>();
+            if (gamebase.StateTime > script.m_UpTime)
                 strOut = m_ChangeStateName;
-#endif
-            if (stateEditorUtils.StateList.Count == 0 || stateEditorUtils.GameObject == null)
-                strOut = m_ChangeStateName;
-
 
             return strOut;
         }

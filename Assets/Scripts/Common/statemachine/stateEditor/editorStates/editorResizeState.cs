@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
@@ -33,7 +33,7 @@ using System.IO;
 /// </summary>
 namespace artiMech
 {
-    public class editorResizeState : stateGameBase
+    public class editorResizeState : editorBaseState
     {
         stateWindowsNode m_WindowsSelectedNode = null;
 
@@ -77,27 +77,27 @@ namespace artiMech
         /// </summary>
         public override void UpdateEditorGUI()
         {
+            base.UpdateEditorGUI();
+
             Event ev = Event.current;
             stateEditorUtils.MousePos = ev.mousePosition;
 
 
-             Rect rect = m_WindowsSelectedNode.WinRect;
+            Rect rect = m_WindowsSelectedNode.WinRect;
 
-                    rect.width = ev.mousePosition.x - m_WindowsSelectedNode.WinRect.x;
-                    rect.height = ev.mousePosition.y - m_WindowsSelectedNode.WinRect.y;
+            Vector2 mousePosTrans = new Vector2();
+            mousePosTrans = stateEditorUtils.TranslationMtx.UnTransform(ev.mousePosition);
 
-                    rect.width = Mathf.Clamp(rect.width, 32, 1024);
-                    rect.height = Mathf.Clamp(rect.height, 32, 1024);
+            rect.width = mousePosTrans.x - m_WindowsSelectedNode.WinRect.x;
+            rect.height = mousePosTrans.y - m_WindowsSelectedNode.WinRect.y;
 
-                    m_WindowsSelectedNode.WinRect = rect;
+            rect.width = Mathf.Clamp(rect.width, 32, 1024);
+            rect.height = Mathf.Clamp(rect.height, 32, 1024);
+
+            m_WindowsSelectedNode.WinRect = rect;
 
             if (ev.type == EventType.mouseUp)
                 m_ActionConfirmed = true;
-
-            for (int i = 0; i < stateEditorUtils.StateList.Count; i++)
-            {
-                stateEditorUtils.StateList[i].Update(this);
-            }
 
             stateEditorUtils.Repaint();
         }

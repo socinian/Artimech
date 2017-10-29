@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -36,138 +36,47 @@ namespace artiMech
         static string m_AddConditionPath = "";
         static string m_AddConditionReplace = "";
 
+        static utlMatrix34 m_TranslationMtx = new utlMatrix34();
 
+        static bool m_bVerbose = false;
 
         #region Accessors 
-        public static IList<stateWindowsNode> StateList
-        {
-            get
-            {
-                return m_StateList;
-            }
 
-            set
-            {
-                m_StateList = value;
-            }
-        }
+        /// <summary>  Not sure. </summary>
+        public static IList<stateWindowsNode> StateList { get { return m_StateList; } set { m_StateList = value; } }
 
-        public static GameObject EditorCurrentGameObject
-        {
-            get
-            {
-                return m_EditorCurrentGameObject;
-            }
+        /// <summary>  Not sure. </summary>
+        public static GameObject EditorCurrentGameObject { get { return m_EditorCurrentGameObject; } set { m_EditorCurrentGameObject = value; } }
 
-            set
-            {
-                m_EditorCurrentGameObject = value;
-            }
-        }
+        /// <summary>  Not sure. </summary>
+        public static GameObject GameObject { get { return m_GameObject; } set { m_GameObject = value; } }
 
-        public static GameObject GameObject
-        {
-            get
-            {
-                return m_GameObject;
-            }
+        /// <summary>  Not sure. </summary>
+        public static string StateMachineName { get { return m_StateMachineName; } set { m_StateMachineName = value; } }
 
-            set
-            {
-                m_GameObject = value;
-            }
-        }
+        /// <summary>  Not sure. </summary>
+        public static GameObject WasGameObject { get { return m_WasGameObject; } set { m_WasGameObject = value; } }
 
-        public static string StateMachineName
-        {
-            get
-            {
-                return m_StateMachineName;
-            }
+        /// <summary>  Not sure. </summary>
+        public static Vector3 MousePos { get { return m_MousePos; } set { m_MousePos = value; } }
 
-            set
-            {
-                m_StateMachineName = value;
-            }
-        }
+        /// <summary>  Not sure. </summary>
+        public static stateWindowsNode SelectedNode { get { return m_SelectedWindowsNode; } set { m_SelectedWindowsNode = value; } }
 
-        public static GameObject WasGameObject
-        {
-            get
-            {
-                return m_WasGameObject;
-            }
+        /// <summary>  Not sure. </summary>
+        public static stateEditor StateEditor { get { return m_StateEditor; } set { m_StateEditor = value; } }
 
-            set
-            {
-                m_WasGameObject = value;
-            }
-        }
+        /// <summary>  Not sure. </summary>
+        public static string AddConditionPath { get { return m_AddConditionPath; } set { m_AddConditionPath = value; } }
 
-        public static Vector3 MousePos
-        {
-            get
-            {
-                return m_MousePos;
-            }
+        /// <summary>  Not sure. </summary>
+        public static string AddConditionReplace { get { return m_AddConditionReplace; } set { m_AddConditionReplace = value; } }
 
-            set
-            {
-                m_MousePos = value;
-            }
-        }
+        /// <summary>  Returns the translation matrix for the visual state window so panning can happen. </summary>
+        public static utlMatrix34 TranslationMtx { get { return m_TranslationMtx; } set { m_TranslationMtx = value; } }
 
-        public static stateWindowsNode SelectedNode
-        {
-            get
-            {
-                return m_SelectedWindowsNode;
-            }
-
-            set
-            {
-                m_SelectedWindowsNode = value;
-            }
-        }
-
-        public static stateEditor StateEditor
-        {
-            get
-            {
-                return m_StateEditor;
-            }
-
-            set
-            {
-                m_StateEditor = value;
-            }
-        }
-
-        public static string AddConditionPath
-        {
-            get
-            {
-                return m_AddConditionPath;
-            }
-
-            set
-            {
-                m_AddConditionPath = value;
-            }
-        }
-
-        public static string AddConditionReplace
-        {
-            get
-            {
-                return m_AddConditionReplace;
-            }
-
-            set
-            {
-                m_AddConditionReplace = value;
-            }
-        }
+        /// <summary> Verbose. </summary>
+        public static bool Verbose { get { return m_bVerbose; } set { m_bVerbose = value; } }
 
         #endregion
 
@@ -280,9 +189,16 @@ namespace artiMech
                     Type type = Type.GetType("artiMech." + words[i + 3]);
                     if (type != null)
                     {
-                        string buffer = "";
-                        buffer = type.BaseType.Name;
-                        if (buffer == "baseState" || buffer == "stateGameBase")
+                        string baseOneStr = "";
+                        string baseTwoStr = "";
+                        string baseThreeStr = "";
+
+                        baseOneStr = type.BaseType.Name;
+                        baseTwoStr = type.BaseType.BaseType.Name;
+                        baseThreeStr = type.BaseType.BaseType.BaseType.Name;
+
+                        //if (baseOneStr == "baseState" )//|| buffer == "stateGameBase")
+                        if (baseOneStr == "baseState" || baseTwoStr == "baseState" || baseThreeStr == "baseState")
                         {
                             stateWindowsNode compNode = FindStateWindowsNodeByName(words[i + 3]);
                             if (compNode != null)
@@ -318,9 +234,16 @@ namespace artiMech
 
                     if (type != null)
                     {
-                        string buffer = "";
-                        buffer = type.BaseType.Name;
-                        if (buffer == "baseState" || buffer == "stateGameBase")
+                        string baseOneStr = "";
+                        string baseTwoStr = "";
+                        string baseThreeStr = "";
+
+                        baseOneStr = type.BaseType.Name;
+                        baseTwoStr = type.BaseType.BaseType.Name;
+                        baseThreeStr = type.BaseType.BaseType.BaseType.Name;
+
+                        //if (baseOneStr == "baseState" )//|| buffer == "stateGameBase")
+                        if (baseOneStr == "baseState" || baseTwoStr == "baseState" || baseThreeStr == "baseState")
                         {
                             m_StateNameList.Add(words[i + 1]);
                             // Debug.Log("<color=cyan>" + "<b>" + "words[i + 1] = " + "</b></color>" + "<color=grey>" + words[i + 1] + "</color>" + " .");
@@ -352,7 +275,7 @@ namespace artiMech
             }
 
             //creates a start state from a template and populate aMech directory
-            string stateStartName = ReadReplaceAndWrite(exampleToCopy, stateName, pathName, pathAndFileNameStartState, replaceName, "");
+            ReadReplaceAndWrite(exampleToCopy, stateName, pathName, pathAndFileNameStartState, replaceName, "");
 
             return true;
         }
@@ -555,19 +478,21 @@ namespace artiMech
 
             //replace the startStartStateTemplate
             utlDataAndFile.ReplaceTextInFile(pathAndFileName, "stateEmptyExample", stateStartName);
-
-            Debug.Log(
-                        "<b><color=navy>Artimech Report Log Section A\n</color></b>"
-                        + "<i><color=grey>Click to view details</color></i>"
-                        + "\n"
-                        + "<color=blue>Finished creating a state machine named </color><b>"
-                        + stateMachName
-                        + "</b>:\n"
-                        + "<color=blue>Created and added a start state named </color>"
-                        + stateStartName
-                        + "<color=blue> to </color>"
-                        + stateMachName
-                        + "\n\n");
+            if (Verbose)
+            {
+                Debug.Log(
+                            "<b><color=navy>Artimech Report Log Section A\n</color></b>"
+                            + "<i><color=grey>Click to view details</color></i>"
+                            + "\n"
+                            + "<color=blue>Finished creating a state machine named </color><b>"
+                            + stateMachName
+                            + "</b>:\n"
+                            + "<color=blue>Created and added a start state named </color>"
+                            + stateStartName
+                            + "<color=blue> to </color>"
+                            + stateMachName
+                            + "\n\n");
+            }
 
             SaveStateInfo(stateMachName, stateEditorUtils.GameObject.name);
 
@@ -637,7 +562,11 @@ namespace artiMech
                     fileAndPath = utlDataAndFile.FindPathAndFileByClassName(stateName);
 
                     stateWindowsNode windowNode = new stateWindowsNode(stateEditorUtils.StateList.Count);
-                    windowNode.Set(fileAndPath,stateName,stateName, MousePos.x, MousePos.y, 150, 80);
+
+                    Vector3 transMousePos = new Vector3();
+                    transMousePos = stateEditorUtils.TranslationMtx.UnTransform(MousePos);
+
+                    windowNode.Set(fileAndPath,stateName,stateName, transMousePos.x, transMousePos.y, 150, 80);
                     StateList.Add(windowNode);
 
                     SaveStateWindowsNodeData(fileAndPath, stateName, (int)MousePos.x, (int)MousePos.y, 150, 80);

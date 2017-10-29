@@ -1,4 +1,4 @@
-﻿/// Artimech
+/// Artimech
 /// 
 /// Copyright © <2017> <George A Lancaster>
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this software 
@@ -45,6 +45,8 @@ namespace artiMech
         bool m_MainBodyHover = false;
         bool m_ResizeBodyHover = false;
         bool m_TitleHover = false;
+
+        Vector3 m_LinePos;
 
         #endregion
         #region Accessors
@@ -131,6 +133,19 @@ namespace artiMech
             }
         }
 
+        public Vector3 LinePos
+        {
+            get
+            {
+                return m_LinePos;
+            }
+
+            set
+            {
+                m_LinePos = value;
+            }
+        }
+
         #endregion
 
         /// <summary>
@@ -195,7 +210,35 @@ namespace artiMech
         }
 
         /// <summary>
-        /// Check to see if a position is inside the main window.
+        /// returns the position of the window with the scroll/pan mtx transform.
+        /// </summary>
+        /// <returns></returns>
+        public Vector3 GetTransformedPos()
+        {
+            return stateEditorUtils.TranslationMtx.Transform(GetPos());
+        }
+
+        /// <summary>
+        /// Is within the window using the scroll transform.
+        /// </summary>
+        /// <param name="tranVect"></param>
+        /// <returns></returns>
+        public bool IsWithinUsingPanZoomTransform(Vector2 vect)
+        {
+            Vector3 transVect = new Vector3();
+            transVect = stateEditorUtils.TranslationMtx.Transform(vect);
+            if (transVect.x >= m_WinRect.x && transVect.x < m_WinRect.x + m_WinRect.width)
+            {
+                if (transVect.y >= m_WinRect.y && transVect.y < m_WinRect.y + m_WinRect.height)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Is within rect of the state window.
         /// </summary>
         /// <param name="vect"></param>
         /// <returns></returns>
@@ -211,6 +254,92 @@ namespace artiMech
             return false;
         }
 
+        public Vector3 GetClosetPointOnConditional(Vector3 pos)
+        {
+            Vector3 vectOut = new Vector3();
+            Vector3 startPos = GetPos();
+            startPos.x += WinRect.width * 0.5f;
+            startPos.y += WinRect.height * 0.5f;
+
+#pragma warning disable CS0162 // Unreachable code detected
+            for (int i = 0; i < ConditionLineList.Count; i++)
+#pragma warning restore CS0162 // Unreachable code detected
+            {
+                Vector3 endPos = ConditionLineList[i].GetPos();
+                endPos.x += ConditionLineList[i].WinRect.width * 0.5f;
+                endPos.y += ConditionLineList[i].WinRect.height * 0.5f;
+
+                vectOut = utlMath.NearestPointOnLine(pos, startPos, endPos);
+                //vectOut = utlMath.GetClosestPointOnLineSegment(pos, startPos, endPos);
+
+
+                //Debug.Log("nearestPointOnLine = " + vectOut);
+                //Debug.Log("startPos = " + startPos);
+                //Debug.Log("endPos = " + endPos);
+                //Debug.Log("distance = " + distance);
+
+                return vectOut;
+            }
+            return vectOut;
+        }
+
+        public Vector3 GetStartPosOnCondition()
+        {
+            Vector3 startPos = GetPos();
+            startPos.x += WinRect.width * 0.5f;
+            startPos.y += WinRect.height * 0.5f;
+            return startPos;
+        }
+
+        public Vector3 GetEndPosOnCondition()
+        {
+            Vector3 vectOut = new Vector3();
+#pragma warning disable CS0162 // Unreachable code detected
+            for (int i = 0; i < ConditionLineList.Count; i++)
+#pragma warning restore CS0162 // Unreachable code detected
+            {
+                Vector3 endPos = ConditionLineList[i].GetPos();
+                endPos.x += ConditionLineList[i].WinRect.width * 0.5f;
+                endPos.y += ConditionLineList[i].WinRect.height * 0.5f;
+                return endPos;
+            }
+            return vectOut;
+        }
+
+        /// <summary>
+        /// Returns null if there isn't a conditional line segement within
+        /// the distance threshold otherwise it returns the closest class name to the
+        /// line segment.
+        /// </summary>
+        /// <param name="pos"></param>
+        /// <param name="distThreshold"></param>
+        /// <returns>Name of the condition class.</returns>
+        public string GetConditionalByPosition(Vector3 pos,float distThreshold)
+        {
+            Vector3 startPos = GetPos();
+            startPos.x += WinRect.width * 0.5f;
+            startPos.y += WinRect.height * 0.5f;
+
+            for (int i = 0; i < ConditionLineList.Count; i++)
+            {
+                Vector3 endPos = ConditionLineList[i].GetPos();
+                endPos.x += ConditionLineList[i].WinRect.width * 0.5f;
+                endPos.y += ConditionLineList[i].WinRect.height * 0.5f;
+
+                Vector3 nearestPointOnLine = utlMath.NearestPointOnLine(pos, startPos, endPos);
+                m_LinePos = nearestPointOnLine;
+                float distance = Vector3.Distance(pos, nearestPointOnLine);
+                //Debug.Log("nearestPointOnLine = " + nearestPointOnLine);
+                //Debug.Log("startPos = " + startPos);
+                //Debug.Log("endPos = " + endPos);
+                //Debug.Log("distance = " + distance);
+                if (distance < distThreshold)
+                    return ClassName + "_To_" + ConditionLineList[i].ClassName;
+            }
+
+            return null;
+        }
+
         public void Update(baseState state)
         {
             m_State = state;
@@ -218,10 +347,11 @@ namespace artiMech
             if( state is editorAddPostCondtionalState || 
                 state is editorMoveState ||
                 state is editorDeleteState ||
-                state is editorRenameState)
-                GUI.Window(m_Id, WinRect, DrawNodeWindowNoDrag, m_WindowStateAlias);
+                state is editorRenameState ||
+                state is editorMoveBackground)
+                GUI.Window(m_Id, stateEditorUtils.TranslationMtx.Transform(WinRect), DrawNodeWindowNoDrag, m_WindowStateAlias);
             else
-                GUI.Window(m_Id, WinRect, DrawNodeWindow, m_WindowStateAlias);
+                GUI.Window(m_Id, stateEditorUtils.TranslationMtx.Transform(WinRect), DrawNodeWindow, m_WindowStateAlias);
 
             //draw conditions
             Vector3 startPos = GetPos();
@@ -235,7 +365,7 @@ namespace artiMech
                 endPos.y += ConditionLineList[i].WinRect.height * 0.5f;
 
                 Color shadowCol = new Color(0, 0, 1, 0.06f);
-                stateEditorDrawUtils.DrawArrow( startPos, endPos, WinRect, ConditionLineList[i].WinRect, 1, Color.black, 1, shadowCol,Color.white);
+                stateEditorDrawUtils.DrawArrowTranformed( stateEditorUtils.TranslationMtx, startPos, endPos, WinRect, ConditionLineList[i].WinRect, 1, Color.black, 1, shadowCol,Color.white);
             }
 
         }
@@ -282,6 +412,8 @@ namespace artiMech
 
                         menu.AddSeparator("");
                         menu.AddItem(new GUIContent("Edit Script"), false, dState.EditScriptCallback, this);
+                        menu.AddSeparator("");
+                        menu.AddItem(new GUIContent("Refactor State Class"), false, dState.RefactorClassCallback, this);
                         stateEditorUtils.SelectedNode = this;
                         menu.ShowAsContext();
                         Event.current.Use();
@@ -307,8 +439,8 @@ namespace artiMech
             else
                 stateEditorDrawUtils.DrawCubeFilled(new Vector3(WinRect.width-xOffset,yOffset,0), boxSize, 1, Color.black, 1, shadowCol, new Color(0.9f, 0.9f, 0.9f));
 
-            stateEditorDrawUtils.DrawX(new Vector3(WinRect.width - (xOffset * 1.5f), yOffset * 0.5f, 0), boxSize - 1, boxSize - 1, 2, shadowCol);
-            stateEditorDrawUtils.DrawX(new Vector3(WinRect.width - (xOffset*1.5f), yOffset*0.5f, 0), boxSize-1 , boxSize-1 , 1, Color.black);
+            stateEditorDrawUtils.DrawX(new Vector3(WinRect.width - (xOffset * 0.95f), yOffset * 0.95f, 0), boxSize - 1, boxSize - 1, 2, shadowCol);
+            stateEditorDrawUtils.DrawX(new Vector3(WinRect.width - (xOffset * 1.0f), yOffset * 1.0f, 0), boxSize - 1, boxSize - 1, 1, Color.black);
 
             //draw the resizer
             const float initSizerSize = 15;
@@ -341,6 +473,8 @@ namespace artiMech
             EditorGUIUtility.AddCursorRect(m_CloseButtonRect, MouseCursor.ArrowMinus);
 
             UpdateMouseHover(Event.current.mousePosition);
+
+            //stateEditorDrawUtils.DrawX(m_LinePos, 10, 10, 1, Color.black);
 
             GUI.DragWindow();
         }

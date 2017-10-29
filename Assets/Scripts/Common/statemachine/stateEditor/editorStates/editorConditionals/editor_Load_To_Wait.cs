@@ -15,6 +15,7 @@
 /// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, 
 /// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR 
 /// OTHER DEALINGS IN THE SOFTWARE.
+/// 
 
 using System;
 using System.Collections.Generic;
@@ -27,12 +28,21 @@ using UnityEngine;
 /// </summary>
 namespace artiMech
 {
-    public class aMechCubeStateB_To_aMechCubeStateA : stateConditionalBase
+    public class editor_Load_To_Wait : stateConditionalBase
     {
-        
-        public aMechCubeStateB_To_aMechCubeStateA(string changeStateName) : base (changeStateName)
+        public editor_Load_To_Wait(string changeStateName) : base(changeStateName)
         {
-            
+
+        }
+
+        public override void Enter(baseState state)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Exit(baseState state)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -44,9 +54,13 @@ namespace artiMech
         {
             string strOut = null;
 
-            stateGameBase gamebase = (stateGameBase)state;
-            aMechCube script = gamebase.StateGameObject.GetComponent<aMechCube>();
-            if (gamebase.StateTime > script.m_RestTime)
+#if ARTIMECH_THIS_SHOULD_NEVER_BE_TRUE_BUT_IS_AN_EXAMPLE_OF_A_CONDITION_BEING_TRUE
+            This is an example of setting a contition to true if the gameobject
+            falls below a certain height ingame.
+            if (state.m_GameObject.transform.position.y <= 1000)
+                strOut = m_ChangeStateName;
+#endif
+            if (stateEditorUtils.StateList.Count == 0 || stateEditorUtils.GameObject == null)
                 strOut = m_ChangeStateName;
 
 

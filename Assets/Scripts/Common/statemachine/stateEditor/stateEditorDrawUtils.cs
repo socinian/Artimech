@@ -1,4 +1,4 @@
-﻿/// Artimech
+/// Artimech
 /// 
 /// Copyright © <2017> <George A Lancaster>
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this software 
@@ -25,12 +25,52 @@ using UnityEngine;
 
 namespace artiMech
 {
+
     /// <summary>
     /// A static class to help with some of the specific code needed for the
     /// state editor and its drawing functions
     /// </summary>
     public static class stateEditorDrawUtils
     {
+
+        public static void DrawGridBackground()
+        {
+            Color shadowCol = new Color(0, 0, 0, 0.2f);
+            stateEditorDrawUtils.DrawGridBackground(new Vector2(-5000, -5000), new Vector2(5000, 5000), new Vector2(25, 25), 1, shadowCol);
+            Color blueCol = new Color(0, 0, 1, 0.2f);
+            stateEditorDrawUtils.DrawGridBackground(new Vector2(-5000, -5000), new Vector2(5000, 5000), new Vector2(250, 250), 3, blueCol);
+            stateEditorDrawUtils.DrawGridBackground(new Vector2(-5000, -5000), new Vector2(5000, 5000), new Vector2(250, 250), 1, blueCol);
+        }
+
+        public static void DrawGridBackground(Vector2 gridStart, Vector2 gridEnd, Vector2 gridSize, int lineWidth, Color lineColor)
+        {
+            Vector2 startPos = new Vector2(gridStart.x,gridStart.y);
+            Vector2 endPos = new Vector2(gridEnd.x, gridStart.y);
+            float distance = utlMath.FloatDistance(gridStart.x, gridEnd.x);
+            float gridCount = distance / gridSize.x;
+            for (int indexX = 0; indexX < gridCount; indexX++)
+            {
+                startPos.y += gridSize.y;
+                endPos.y += gridSize.y;
+                endPos.x = gridEnd.x;
+
+                DrawLine(stateEditorUtils.TranslationMtx.Transform(startPos), stateEditorUtils.TranslationMtx.Transform(endPos), lineWidth, lineColor);
+            }
+
+            startPos.Set(gridStart.x, gridStart.y);
+            endPos.Set(gridStart.x, gridEnd.x);
+
+            for (int indexY = 0; indexY < gridCount; indexY++)
+            {
+                startPos.x += gridSize.x;
+                endPos.x += gridSize.x;
+                endPos.y = gridEnd.y;
+
+                DrawLine(stateEditorUtils.TranslationMtx.Transform(startPos), stateEditorUtils.TranslationMtx.Transform(endPos), lineWidth, lineColor);
+            }
+
+        }
+
         public static void DrawCubeFilled(Vector3 startPos, float boxSize,  int lineWidth, Color lineColor, int shadowWidth, Color shadowColor, Color bodyColor)
         {
             Handles.color = shadowColor;
@@ -48,17 +88,15 @@ namespace artiMech
         public static void DrawX(Vector3 startPos,float sizeX,float sizeY,int lineWidth,Color lineColor)
         {
             Vector3 lineStart = new Vector3();
-            lineStart = startPos;
-
             Vector3 lineEnd = new Vector3();
-            lineEnd = startPos;
-            lineEnd.y += sizeY;
-            lineEnd.x += sizeX;
+
+            lineStart = startPos + new Vector3(-sizeX * 0.5f,-sizeY * 0.5f, 0);
+            lineEnd = startPos + new Vector3(+sizeX * 0.5f, +sizeY * 0.5f, 0);
 
             DrawLine(lineStart, lineEnd, lineWidth, lineColor);
 
-            lineStart.y += sizeY;
-            lineEnd.y -= sizeY;
+            lineStart = startPos + new Vector3(+sizeX * 0.5f, -sizeY * 0.5f, 0);
+            lineEnd = startPos + new Vector3(-sizeX * 0.5f, +sizeY * 0.5f, 0);
 
             DrawLine(lineStart, lineEnd, lineWidth, lineColor);
 
@@ -90,6 +128,29 @@ namespace artiMech
         public static void DrawLine(Vector3 startPos, Vector3 endPos, int lineWidth, Color lineColor)
         {
             Handles.DrawBezier(startPos, endPos, endPos, startPos, lineColor, null, lineWidth);
+        }
+
+        public static void DrawArrowTranformed(utlMatrix34 mtx,Vector3 startPos, Vector3 endPos, Rect winRectStart, Rect winRectEnd, int lineWidth, Color lineColor, int shadowWidth, Color shadowColor, Color bodyColor)
+        {
+            Vector3 startPosTrans = new Vector3();
+            startPosTrans = mtx.Transform(startPos);
+
+            Vector3 endPosTrans = new Vector3();
+            endPosTrans = mtx.Transform(endPos);
+
+            Rect transStartRect = new Rect(winRectStart);
+            Rect transEndRect = new Rect(winRectEnd);
+
+            transStartRect.position = mtx.Transform(transStartRect.position);
+            transEndRect.position = mtx.Transform(transEndRect.position);
+
+            DrawArrow(startPosTrans,
+                endPosTrans,
+                transStartRect,
+                transEndRect,
+                lineWidth,
+                lineColor, shadowWidth, shadowColor, bodyColor);
+
         }
 
         public static void DrawArrow(Vector3 startPos, Vector3 endPos,Rect winRectStart, Rect winRectEnd, int lineWidth, Color lineColor, int shadowWidth, Color shadowColor,Color bodyColor)

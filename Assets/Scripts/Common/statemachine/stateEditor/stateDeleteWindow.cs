@@ -1,4 +1,4 @@
-﻿/// Artimech
+/// Artimech
 /// 
 /// Copyright © <2017> <George A Lancaster>
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this software 
@@ -172,6 +172,7 @@ namespace artiMech
             GUILayout.Space(8);
             GUILayout.Label("Are you sure you want to delete: ", GUI.skin.name, null);
             GUILayout.Space(10);
+
             GUILayout.BeginHorizontal("");
             GUILayout.Label("      ", "", null);
             GUILayout.Label(m_StateToDeleteName, GUI.skin.textArea, null);
@@ -179,6 +180,7 @@ namespace artiMech
             GUILayout.Label(" ", "", null);
             GUILayout.EndHorizontal();
             GUILayout.Space(10);
+
             GUILayout.BeginHorizontal("");
             if(GUILayout.Button("Delete"))
             {

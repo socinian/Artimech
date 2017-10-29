@@ -1,4 +1,4 @@
-﻿/// Artimech
+/// Artimech
 /// 
 /// Copyright © <2017> <George A Lancaster>
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this software 
@@ -15,7 +15,6 @@
 /// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, 
 /// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR 
 /// OTHER DEALINGS IN THE SOFTWARE.
-/// 
 
 using System;
 using System.Collections.Generic;
@@ -28,11 +27,22 @@ using UnityEngine;
 /// </summary>
 namespace artiMech
 {
-    public class editorDisplayToMoveConditional : stateConditionalBase
+    public class aCubeRest_To_aCubeStart : stateConditionalBase
     {
-        public editorDisplayToMoveConditional(string changeStateName) : base(changeStateName)
+        
+        public aCubeRest_To_aCubeStart(string changeStateName) : base (changeStateName)
         {
+            
+        }
 
+        public override void Enter(baseState state)
+        {
+            
+        }
+
+        public override void Exit(baseState state)
+        {
+            
         }
 
         /// <summary>
@@ -50,8 +60,6 @@ namespace artiMech
             if (state.m_GameObject.transform.position.y <= 1000)
                 strOut = m_ChangeStateName;
 #endif
-//            if (stateEditorUtils.StateList.Count == 0 || stateEditorUtils.GameObject == null)
-//                strOut = m_ChangeStateName;
 
 
             return strOut;

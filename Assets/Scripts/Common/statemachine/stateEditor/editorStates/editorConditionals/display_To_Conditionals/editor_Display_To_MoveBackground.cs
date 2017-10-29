@@ -1,4 +1,4 @@
-﻿/// Artimech
+/// Artimech
 /// 
 /// Copyright © <2017> <George A Lancaster>
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this software 
@@ -28,11 +28,21 @@ using UnityEngine;
 /// </summary>
 namespace artiMech
 {
-    public class editorDisplayToLoadConditional : stateConditionalBase
+    public class editor_Display_To_MoveBackground : stateConditionalBase
     {
-        public editorDisplayToLoadConditional(string changeStateName) : base(changeStateName)
+        public editor_Display_To_MoveBackground(string changeStateName) : base(changeStateName)
         {
 
+        }
+
+        public override void Enter(baseState state)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Exit(baseState state)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -50,11 +60,9 @@ namespace artiMech
             if (state.m_GameObject.transform.position.y <= 1000)
                 strOut = m_ChangeStateName;
 #endif
-            //if my state list is empty and a game object is populated then go to a load state
-            //and see if the gameobject has a statemachine attached to it.
-            if (stateEditorUtils.GameObject != stateEditorUtils.WasGameObject && stateEditorUtils.GameObject!=null)
+            editorDisplayWindowsState theState = (editorDisplayWindowsState) state;
+            if (theState.MoveBackground)
                 strOut = m_ChangeStateName;
-
 
             return strOut;
         }

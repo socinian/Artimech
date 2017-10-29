@@ -1,4 +1,4 @@
-﻿/// Artimech
+/// Artimech
 /// 
 /// Copyright © <2017> <George A Lancaster>
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this software 
@@ -28,11 +28,21 @@ using UnityEngine;
 /// </summary>
 namespace artiMech
 {
-    public class editorDisplayToWaitConditional : stateConditionalBase
+    public class editor_Display_To_Save : stateConditionalBase
     {
-        public editorDisplayToWaitConditional(string changeStateName) : base(changeStateName)
+        public editor_Display_To_Save(string changeStateName) : base(changeStateName)
         {
 
+        }
+
+        public override void Enter(baseState state)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Exit(baseState state)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -44,15 +54,9 @@ namespace artiMech
         {
             string strOut = null;
 
-#if ARTIMECH_THIS_SHOULD_NEVER_BE_TRUE_BUT_IS_AN_EXAMPLE_OF_A_CONDITION_BEING_TRUE
-            This is an example of setting a contition to true if the gameobject
-            falls below a certain height ingame.
-            if (state.m_GameObject.transform.position.y <= 1000)
+            editorDisplayWindowsState theState = (editorDisplayWindowsState) state;
+            if (theState.Save)
                 strOut = m_ChangeStateName;
-#endif
-            if (stateEditorUtils.StateList.Count == 0 || stateEditorUtils.GameObject == null)
-                strOut = m_ChangeStateName;
-
 
             return strOut;
         }

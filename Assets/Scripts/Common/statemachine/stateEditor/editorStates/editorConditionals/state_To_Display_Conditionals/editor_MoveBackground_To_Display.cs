@@ -1,4 +1,4 @@
-﻿/// Artimech
+/// Artimech
 /// 
 /// Copyright © <2017> <George A Lancaster>
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this software 
@@ -28,17 +28,27 @@ using UnityEngine;
 /// </summary>
 namespace artiMech
 {
-    public class editorLoadToDisplayConditional : stateConditionalBase
+    public class editor_MoveBackground_To_Display : stateConditionalBase
     {
-        public editorLoadToDisplayConditional(string changeStateName) : base(changeStateName)
+        public editor_MoveBackground_To_Display(string changeStateName) : base(changeStateName)
         {
 
+        }
+
+        public override void Enter(baseState state)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Exit(baseState state)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
         /// Test conditionals are placed here.
         /// </summary>
-        /// <param name="state"></param>6666666666  `  
+        /// <param name="state"></param>
         /// <returns>true or false depending if transition conditions are met.</returns>
         public override string UpdateConditionalTest(baseState state)
         {
@@ -50,9 +60,9 @@ namespace artiMech
             if (state.m_GameObject.transform.position.y <= 1000)
                 strOut = m_ChangeStateName;
 #endif
-            if(stateEditorUtils.StateList.Count>0)
+            editorMoveBackground theState = (editorMoveBackground) state;
+            if (theState.ActionConfirmed)
                 strOut = m_ChangeStateName;
-
 
             return strOut;
         }

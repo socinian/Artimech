@@ -1,4 +1,4 @@
-﻿/// Artimech
+/// Artimech
 /// 
 /// Copyright © <2017> <George A Lancaster>
 /// Permission is hereby granted, free of charge, to any person obtaining a copy of this software 
@@ -28,11 +28,21 @@ using UnityEngine;
 /// </summary>
 namespace artiMech
 {
-    public class editorDisplayToAddConditional : stateConditionalBase
+    public class editor_Display_To_Refactor : stateConditionalBase
     {
-        public editorDisplayToAddConditional(string changeStateName) : base(changeStateName)
+        public editor_Display_To_Refactor(string changeStateName) : base(changeStateName)
         {
 
+        }
+
+        public override void Enter(baseState state)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Exit(baseState state)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -50,10 +60,9 @@ namespace artiMech
             if (state.m_GameObject.transform.position.y <= 1000)
                 strOut = m_ChangeStateName;
 #endif
-            editorDisplayWindowsState dState = (editorDisplayWindowsState)state;
-            if (dState != null && dState.AddConditional==true)
+            editorDisplayWindowsState theState = (editorDisplayWindowsState) state;
+            if (theState.RefactorClass)
                 strOut = m_ChangeStateName;
-
 
             return strOut;
         }
